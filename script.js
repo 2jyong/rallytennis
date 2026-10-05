@@ -1,11 +1,15 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const root = document.documentElement;
+history.scrollRestoration = 'manual';
 const legacySections = { coaching: 'about', team: 'proof', program: 'lessons', space: 'difference', contact: 'info', 'contact-program': 'info', 'contact-level': 'info' };
 const legacyDestination = legacySections[location.hash.slice(1)];
 if (legacyDestination) history.replaceState(null, '', `#${legacyDestination}`);
-function visitLegacySection() {
-  if (legacyDestination) document.getElementById(legacyDestination).scrollIntoView({ behavior: 'instant' });
+function settleIntroDestination(skipToHero = false) {
+  if (skipToHero) history.replaceState(null, '', location.pathname + location.search);
+  const destination = !skipToHero && document.getElementById(location.hash.slice(1));
+  if (destination) destination.scrollIntoView({ behavior: 'instant' });
+  else window.scrollTo({ top: 0, behavior: 'instant' });
 }
 window.addEventListener('hashchange', () => {
   const destination = legacySections[location.hash.slice(1)];
@@ -89,7 +93,7 @@ function renderIntro(time) {
   }
   intro.dataset.phase = time < introTiming.impact ? 'serve' : time < introTiming.cover ? 'ball' : time < introTiming.seamEnd ? 'seam' : 'split';
 }
-function finishIntro() {
+function finishIntro(skipToHero = false) {
   if (root.classList.contains('intro-seen')) return;
   cancelAnimationFrame(introFrame);
   if (introFrameIntervals.length) {
@@ -101,7 +105,8 @@ function finishIntro() {
   document.body.classList.remove('intro-active');
   intro.setAttribute('aria-hidden', 'true');
   if (!reduceMotion.matches) heroVideo.play().catch(() => {});
-  visitLegacySection();
+  settleIntroDestination(skipToHero);
+  requestAnimationFrame(() => settleIntroDestination(skipToHero));
 }
 function advanceIntro(time) {
   if (root.classList.contains('intro-seen') || document.visibilityState !== 'visible') return;
@@ -129,6 +134,7 @@ function pauseIntro() {
   introLastTime = 0;
 }
 document.body.classList.add('intro-active');
+if (!location.hash) window.scrollTo({ top: 0, behavior: 'instant' });
 sizeIntroCanvas();
 window.addEventListener('resize', sizeIntroCanvas, { passive: true });
 import('./assets/intro-3d.js').then(({ createServeScene }) => createServeScene(introPlayer, introBallCanvas)).then(scene => {
@@ -147,6 +153,7 @@ document.addEventListener('visibilitychange', () => {
   else pauseIntro();
 });
 window.addEventListener('pageshow', event => {
+  if (!location.hash) window.scrollTo({ top: 0, behavior: 'instant' });
   if (!event.persisted) return;
   root.classList.remove('intro-seen');
   intro.removeAttribute('aria-hidden');
@@ -162,7 +169,7 @@ window.addEventListener('pageshow', event => {
   renderIntro(0);
   resumeIntro();
 });
-introLogo.addEventListener('click', finishIntro);
+introLogo.addEventListener('click', () => finishIntro(true));
 
 const header = document.querySelector('.site-header');
 const meter = document.querySelector('.scroll-meter');

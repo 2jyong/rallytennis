@@ -48,5 +48,15 @@ body.intro-paused .site-intro,body.intro-paused .site-intro *{animation-play-sta
 .metric:nth-child(n+3){border-bottom:0}
 .phrase-nowrap{white-space:nowrap}
 @media(max-width:360px){.metric strong{font-size:36px}}
+@media(max-width:850px){
+  .about-journey{display:block}
+  .about-stage{position:sticky;top:66px;height:clamp(260px,35svh,340px);z-index:3;box-shadow:0 18px 35px rgba(0,0,0,.25)}
+  .about-steps{display:block;position:relative;z-index:1}
+  .about-step{min-height:270px;justify-content:center}
+}
+@media(max-width:600px){
+  .about-stage{height:clamp(205px,30svh,260px)}
+  .about-step{min-height:245px}
+}
 @media(prefers-reduced-motion:reduce){.site-intro{display:block!important;animation:none!important}.intro-seen .site-intro{display:none!important}.toss-ball,.flying-ball,.intro-fill,.intro-seam,.intro-half{display:none!important}}
 .server-figure{overflow:visible}
