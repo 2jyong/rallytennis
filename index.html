@@ -12,6 +12,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b1711'/%3E%3Cpath d='M9 49V15h20c12 0 17 6 17 14 0 6-3 10-9 12l10 8H31l-9-8v8H9Zm13-20h9c3 0 4-1 4-3s-1-3-4-3h-9v6Z' fill='%23dfff38'/%3E%3C/svg%3E" />
   <noscript><style>.site-intro{display:none!important}</style></noscript>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="intro.css" />
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -19,18 +20,35 @@
     <button class="intro-logo" type="button" id="intro-skip" aria-label="오프닝 건너뛰고 홈페이지 보기">RALLY<span>.</span><small>TENNIS ACADEMY</small></button>
     <div class="intro-scene" aria-hidden="true">
       <div class="intro-ground"></div>
-      <svg class="server-figure" viewBox="0 0 180 270" role="presentation">
-        <g fill="none" stroke="#0a100c" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M91 88 L82 167" /><path d="M83 164 L51 236" /><path d="M84 164 L126 236" />
-          <path class="server-front-arm" d="M86 103 L44 76 L42 34" />
-          <g class="server-racket-side"><path class="server-racket-arm" d="M96 102 L139 75 L148 62" /><ellipse class="server-racket" cx="151" cy="34" rx="19" ry="28" fill="none" stroke="#0a100c" stroke-width="7" /></g>
+      <svg class="server-figure" viewBox="0 0 230 330" role="presentation">
+        <ellipse cx="116" cy="308" rx="61" ry="5" fill="#d6ddd1" />
+        <g class="athlete" fill="#0a100c">
+          <path d="M104 188 C100 205 91 228 82 247 Q78 255 76 271 L68 295 L73 304 L91 300 Q101 277 103 259 Q113 237 126 202Z" />
+          <path d="M124 188 Q135 203 140 222 L153 255 Q160 272 165 289 L179 296 L181 305 L160 303 Q142 281 136 262 L119 235 Q113 224 111 205Z" />
+          <path d="M67 292 L55 299 Q49 305 56 309 L87 309 Q93 307 90 301 L78 287Z" />
+          <path d="M162 291 L179 292 L195 303 Q198 309 188 310 L161 307Z" />
+          <path d="M104 161 L133 161 L141 194 Q129 201 116 197 L102 199 L95 190Z" />
+          <path d="M101 83 Q117 77 135 83 Q148 87 151 107 L141 131 L136 165 Q122 176 100 168 L91 129 L86 107 Q88 91 101 83Z" />
+          <path d="M109 67 L127 66 L128 88 Q117 96 105 86Z" />
+          <circle cx="117" cy="51" r="19" />
+          <path d="M99 46 Q100 26 117 27 Q132 25 138 41 L133 46 Q118 35 99 46Z" />
+          <g class="serve-toss-arm">
+            <path d="M99 92 Q87 89 79 78 L61 48 Q55 40 49 44 Q44 48 50 59 L67 93 Q78 112 96 115 L105 105Z" />
+            <circle cx="51" cy="44" r="6" />
+          </g>
+          <g class="serve-racket-arm">
+            <path d="M135 89 Q152 85 161 102 L179 114 L186 105 L168 94 Q161 81 145 79Z" />
+            <circle cx="181" cy="112" r="7" />
+            <path d="M183 110 L204 82" fill="none" stroke="#0a100c" stroke-width="7" stroke-linecap="round" />
+            <ellipse cx="211" cy="58" rx="16" ry="26" fill="none" stroke="#0a100c" stroke-width="6" />
+            <path d="M199 44 L222 72 M202 38 L225 66 M197 57 L224 57 M198 67 L221 45" fill="none" stroke="#0a100c" stroke-width="1.5" opacity=".65" />
+          </g>
         </g>
-        <circle cx="94" cy="51" r="22" fill="#0a100c" />
       </svg>
       <div class="toss-ball"></div><div class="intro-court-line"></div>
     </div>
     <div class="flying-ball" aria-hidden="true"><span></span></div>
-    <div class="intro-fill" aria-hidden="true"></div><div class="intro-seam" aria-hidden="true"></div>
+    <div class="intro-seam" aria-hidden="true"></div>
     <div class="intro-half intro-half-left" aria-hidden="true"></div><div class="intro-half intro-half-right" aria-hidden="true"></div>
     <p class="intro-caption">NEXT POINT STARTS HERE</p>
   </div>

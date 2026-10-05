@@ -17,7 +17,7 @@ window.addEventListener('hashchange', () => {
 // Show the opening on each page visit. The logo dismisses it immediately.
 const intro = document.querySelector('#site-intro');
 let introStarted = false;
-let introRemaining = reduceMotion.matches ? 1800 : 6200;
+let introRemaining = reduceMotion.matches ? 1800 : 7500;
 let introVisibleSince = 0;
 let introTimer;
 function finishIntro() {
@@ -67,7 +67,7 @@ window.addEventListener('pageshow', event => {
   document.body.classList.add('intro-active');
   introStarted = false;
   introVisibleSince = 0;
-  introRemaining = reduceMotion.matches ? 1800 : 6200;
+  introRemaining = reduceMotion.matches ? 1800 : 7500;
   scheduleIntro();
 });
 if (document.readyState === 'complete') window.setTimeout(scheduleIntro, 500);
