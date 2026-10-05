@@ -16,22 +16,62 @@ window.addEventListener('hashchange', () => {
 
 // Show the opening on each page visit. The logo dismisses it immediately.
 const intro = document.querySelector('#site-intro');
+let introStarted = false;
+let introRemaining = reduceMotion.matches ? 1800 : 6200;
+let introVisibleSince = 0;
+let introTimer;
 function finishIntro() {
   if (root.classList.contains('intro-seen')) return;
+  clearTimeout(introTimer);
   root.classList.add('intro-seen');
-  document.body.classList.remove('intro-active');
+  document.body.classList.remove('intro-active', 'intro-playing', 'intro-paused');
+  intro.setAttribute('aria-hidden', 'true');
   visitLegacySection();
 }
-if (!root.classList.contains('intro-seen')) {
-  document.body.classList.add('intro-active');
-  intro.addEventListener('animationend', event => {
-    if (event.animationName === 'introGone') finishIntro();
-  });
-  window.setTimeout(finishIntro, 4400);
-} else {
-  intro.setAttribute('aria-hidden', 'true');
-  requestAnimationFrame(visitLegacySection);
+function resumeIntro() {
+  if (root.classList.contains('intro-seen') || document.readyState !== 'complete' || document.visibilityState !== 'visible' || introVisibleSince) return;
+  if (!introStarted && !reduceMotion.matches) {
+    document.body.classList.add('intro-playing');
+    introStarted = true;
+  }
+  document.body.classList.remove('intro-paused');
+  introVisibleSince = performance.now();
+  introTimer = window.setTimeout(finishIntro, introRemaining);
 }
+function pauseIntro() {
+  if (!introVisibleSince || root.classList.contains('intro-seen')) return;
+  introRemaining = Math.max(0, introRemaining - (performance.now() - introVisibleSince));
+  introVisibleSince = 0;
+  clearTimeout(introTimer);
+  document.body.classList.add('intro-paused');
+}
+function scheduleIntro() {
+  requestAnimationFrame(() => requestAnimationFrame(resumeIntro));
+}
+document.body.classList.add('intro-active');
+intro.addEventListener('animationend', event => {
+  if (event.animationName === 'introGone') finishIntro();
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (introStarted) scheduleIntro();
+    else window.setTimeout(scheduleIntro, 500);
+  }
+  else pauseIntro();
+});
+window.addEventListener('pageshow', event => {
+  if (!event.persisted) return;
+  root.classList.remove('intro-seen');
+  intro.removeAttribute('aria-hidden');
+  document.body.classList.remove('intro-playing', 'intro-paused');
+  document.body.classList.add('intro-active');
+  introStarted = false;
+  introVisibleSince = 0;
+  introRemaining = reduceMotion.matches ? 1800 : 6200;
+  scheduleIntro();
+});
+if (document.readyState === 'complete') window.setTimeout(scheduleIntro, 500);
+else window.addEventListener('load', () => window.setTimeout(scheduleIntro, 500), { once: true });
 document.querySelector('#intro-skip').addEventListener('click', finishIntro);
 
 const header = document.querySelector('.site-header');
