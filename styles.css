@@ -40,5 +40,13 @@ body.intro-playing .intro-half-left{animation:splitLeft 1.15s 4.55s both}
 body.intro-playing .intro-half-right{animation:splitRight 1.15s 4.55s both}
 body.intro-playing .intro-caption{animation:captionOut .6s 3.65s both}
 body.intro-paused .site-intro,body.intro-paused .site-intro *{animation-play-state:paused!important}
+/* Keep each proof figure in an equal two-by-two cell at every viewport. */
+.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.metric{min-width:0;min-height:clamp(185px,22vw,285px)}
+.metric:first-child{padding-left:clamp(18px,3vw,50px)}
+.metric:nth-child(2){border-right:0}
+.metric:nth-child(n+3){border-bottom:0}
+.phrase-nowrap{white-space:nowrap}
+@media(max-width:360px){.metric strong{font-size:36px}}
 @media(prefers-reduced-motion:reduce){.site-intro{display:block!important;animation:none!important}.intro-seen .site-intro{display:none!important}.toss-ball,.flying-ball,.intro-fill,.intro-seam,.intro-half{display:none!important}}
 .server-figure{overflow:visible}

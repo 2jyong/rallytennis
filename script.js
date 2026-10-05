@@ -318,12 +318,12 @@ document.querySelectorAll('[data-count]').forEach(metric => countObserver.observ
 
 // Every name, portrait and biography below is fictional; the credential types exist in Korea.
 const coaches = [
-  { name: '김서진', role: 'HEAD COACH', focus: '타점과 풋워크', years: '12년', license: '1급 생활스포츠지도사 (테니스)', image: 'assets/coach-01.webp' },
-  { name: '박도윤', role: 'PERFORMANCE COACH', focus: '서브와 경기 운영', years: '10년', license: '2급 전문스포츠지도사 (테니스)', image: 'assets/coach-02.webp' },
-  { name: '이하린', role: 'JUNIOR COACH', focus: '주니어 기본기', years: '8년', license: '유소년스포츠지도사 (테니스)', image: 'assets/coach-03.webp' },
-  { name: '정민재', role: 'RALLY COACH', focus: '랠리 리듬', years: '9년', license: '2급 생활스포츠지도사 (테니스)', image: 'assets/coach-04.webp' },
-  { name: '최유나', role: 'TECHNIQUE COACH', focus: '스트로크와 스텝', years: '7년', license: '2급 생활스포츠지도사 (테니스)', image: 'assets/coach-05.webp' },
-  { name: '한태오', role: 'MATCH COACH', focus: '경기 상황 훈련', years: '11년', license: '2급 전문스포츠지도사 (테니스)', image: 'assets/coach-06.webp' },
+  { name: '김지훈', role: 'HEAD COACH', focus: '타점과 풋워크', years: '12년', license: '1급 생활스포츠지도사 (테니스)', image: 'assets/coach-01.webp' },
+  { name: '이하린', role: 'PERFORMANCE COACH', focus: '서브와 경기 운영', years: '10년', license: '2급 전문스포츠지도사 (테니스)', image: 'assets/coach-02.webp' },
+  { name: '한태오', role: 'JUNIOR COACH', focus: '주니어 기본기', years: '8년', license: '유소년스포츠지도사 (테니스)', image: 'assets/coach-03.webp' },
+  { name: '최유나', role: 'RALLY COACH', focus: '랠리 리듬', years: '9년', license: '2급 생활스포츠지도사 (테니스)', image: 'assets/coach-04.webp' },
+  { name: '정민재', role: 'TECHNIQUE COACH', focus: '스트로크와 스텝', years: '7년', license: '2급 생활스포츠지도사 (테니스)', image: 'assets/coach-05.webp' },
+  { name: '박지원', role: 'MATCH COACH', focus: '경기 상황 훈련', years: '11년', license: '2급 전문스포츠지도사 (테니스)', image: 'assets/coach-06.webp' },
   { name: '오지후', role: 'BEGINNER COACH', focus: '입문자 랠리', years: '6년', license: '2급 생활스포츠지도사 (테니스)', image: 'assets/coach-07.webp' },
   { name: '윤가은', role: 'MOVEMENT COACH', focus: '움직임과 밸런스', years: '8년', license: '유소년스포츠지도사 (테니스)', image: 'assets/coach-08.webp' }
 ];
