@@ -1,69 +1,14 @@
-/* Opening sequence: a full-body silhouette serves, then the actual ball fills the viewport. */
-.site-intro{background:#f9faf4;animation:none}
-.intro-logo,.intro-scene,.server-figure,.serve-toss-arm,.serve-racket-arm,.toss-ball,.flying-ball,.intro-seam,.intro-half-left,.intro-half-right,.intro-caption{animation:none}
-.intro-scene{opacity:1}
-.server-figure{width:clamp(90px,7.7vw,104px);top:50%;transform:translate(-50%,-50%);overflow:visible;opacity:1}
-.athlete{transform-origin:116px 185px}
-.serve-toss-arm{transform-origin:98px 99px}
-.serve-racket-arm{transform-origin:136px 98px}
-.intro-ground{top:calc(50% + 62px);width:230px;max-width:60vw}
-.intro-court-line{top:calc(50% + 62px);height:13vh}
-.toss-ball{left:calc(50% - 27px);top:calc(50% - 47px);width:8px;height:8px;opacity:0}
-.flying-ball{left:50%;top:50%;width:44px;height:44px;border:2px solid rgba(116,146,25,.28);box-shadow:inset -6px -6px 10px rgba(75,104,10,.16),0 0 0 1px rgba(255,255,255,.2);opacity:0;transform:translate(calc(-50% + 18px),calc(-50% - 75px)) scale(.18);will-change:transform,opacity}
-.flying-ball span{inset:0;border:0;transform:none;overflow:hidden;border-radius:50%}
-.flying-ball span::before,.flying-ball span::after{content:'';position:absolute;top:-17%;width:76%;height:134%;border:2px solid rgba(255,255,255,.85);border-radius:50%}
-.flying-ball span::before{left:-48%}.flying-ball span::after{right:-48%}
-.intro-seam{height:0;opacity:0}
-.intro-half{opacity:0;background:var(--lime)}
-body.intro-playing .site-intro{animation:introClear .01s 5.94s forwards,introGone .1s 7.06s forwards}
-body.intro-playing .server-figure{animation:athleteLunge 2.9s .25s both}
-body.intro-playing .serve-toss-arm{animation:armToss 1.85s .48s both}
-body.intro-playing .serve-racket-arm{animation:armServe 1.75s 1.08s both}
-body.intro-playing .toss-ball{animation:ballToss 1.7s .62s both}
-body.intro-playing .flying-ball{animation:ballFlight 3.05s 2.25s both,ballDisappear .08s 5.98s forwards}
-body.intro-playing .intro-scene,body.intro-playing .intro-logo{animation:sceneOut .12s 5.35s forwards}
-body.intro-playing .intro-caption{animation:captionOut .45s 2.8s both}
-body.intro-playing .intro-seam{animation:seamDraw .42s 5.42s both,sceneOut .34s 6.02s forwards}
-body.intro-playing .intro-half-left{animation:splitLeft 1.08s 5.95s forwards}
-body.intro-playing .intro-half-right{animation:splitRight 1.08s 5.95s forwards}
-
-@keyframes athleteLunge{
-  0%,28%{transform:translate(-50%,-50%) rotate(0deg)}
-  53%{transform:translate(-50%,-52%) rotate(-5deg)}
-  79%,100%{transform:translate(-47%,-49%) rotate(7deg)}
-}
-@keyframes armToss{
-  0%{transform:rotate(24deg)}
-  42%{transform:rotate(-22deg)}
-  70%{transform:rotate(-19deg)}
-  100%{transform:rotate(18deg)}
-}
-@keyframes armServe{
-  0%,20%{transform:rotate(22deg)}
-  52%{transform:rotate(-20deg)}
-  76%{transform:rotate(-77deg)}
-  100%{transform:rotate(-97deg)}
-}
-@keyframes ballToss{
-  0%{opacity:0;transform:translate(0,14px)}
-  16%{opacity:1;transform:translate(-3px,-7px)}
-  70%{opacity:1;transform:translate(9px,-80px)}
-  100%{opacity:0;transform:translate(17px,-63px)}
-}
-@keyframes ballFlight{
-  0%{opacity:0;transform:translate(calc(-50% + 18px),calc(-50% - 75px)) scale(.18)}
-  8%{opacity:1;transform:translate(calc(-50% + 17px),calc(-50% - 69px)) scale(.45)}
-  24%{opacity:1;transform:translate(calc(-50% + 10px),calc(-50% - 49px)) scale(1)}
-  45%{opacity:1;transform:translate(-50%,-50%) scale(2.3)}
-  65%{opacity:1;transform:translate(-50%,-50%) scale(6)}
-  80%{opacity:1;transform:translate(-50%,-50%) scale(16)}
-  90%{opacity:1;transform:translate(-50%,-50%) scale(38)}
-  100%{opacity:1;transform:translate(-50%,-50%) scale(90)}
-}
-@keyframes ballDisappear{to{opacity:0;visibility:hidden}}
-body.intro-paused .site-intro,body.intro-paused .site-intro *{animation-play-state:paused!important}
+/* One canvas paints every frame of the serve, ball, seam, and reveal. */
+#site-intro{background:#f9faf4;animation:none!important;contain:layout paint}
+#site-intro.is-splitting{background:transparent}
+#site-intro .intro-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+#site-intro .intro-stage{position:absolute;inset:0;z-index:2;pointer-events:none;animation:none!important}
+#site-intro .intro-ground{top:calc(50% + 64px);width:230px;max-width:60vw}
+#site-intro .intro-court-line{top:calc(50% + 64px);height:13vh}
+#site-intro .intro-player{position:absolute;left:50%;top:calc(50% + 64px);height:280px;width:240px;max-width:none;transform:translate(-50%,-100%)}
+#site-intro .intro-logo{z-index:20;animation:none!important}
+#site-intro .intro-caption{z-index:4;animation:none!important;opacity:1}
 @media(prefers-reduced-motion:reduce){
-  .site-intro{display:block!important;animation:none!important}
-  .intro-seen .site-intro{display:none!important}
-  .flying-ball,.toss-ball,.intro-seam,.intro-half{display:none!important}
+  #site-intro{display:block!important}
+  .intro-seen #site-intro{display:none!important}
 }

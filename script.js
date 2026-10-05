@@ -14,65 +14,180 @@ window.addEventListener('hashchange', () => {
   document.getElementById(destination).scrollIntoView({ behavior: 'instant' });
 });
 
-// Show the opening on each page visit. The logo dismisses it immediately.
+// One animation clock keeps the 3D serve, ball, seam, and reveal in sync.
 const intro = document.querySelector('#site-intro');
+const introCanvas = document.querySelector('#intro-canvas');
+const introContext = introCanvas.getContext('2d', { alpha: true });
+const introStage = intro.querySelector('.intro-stage');
+const introPlayer = document.querySelector('#intro-player');
+let serveScene;
+const introLogo = document.querySelector('#intro-skip');
+const introCaption = intro.querySelector('.intro-caption');
+const introDuration = 5900;
+let introElapsed = 0;
+let introLastTime = 0;
+let introFrame = 0;
 let introStarted = false;
-let introRemaining = reduceMotion.matches ? 1800 : 7500;
-let introVisibleSince = 0;
-let introTimer;
+let introWidth = 0;
+let introHeight = 0;
+let introReady = false;
+let introFrameIntervals = [];
+const introEase = value => 1 - (1 - clamp(value)) ** 3;
+const introSmooth = value => {
+  const p = clamp(value);
+  return p * p * (3 - 2 * p);
+};
+function sizeIntroCanvas() {
+  if (!introContext) return;
+  introWidth = window.innerWidth;
+  introHeight = window.innerHeight;
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  introCanvas.width = Math.round(introWidth * ratio);
+  introCanvas.height = Math.round(introHeight * ratio);
+  introContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+  serveScene?.resize();
+  renderIntro(introElapsed);
+}
+function drawTossBall(time, centerX, centerY) {
+  if (time < 350 || time >= 1850) return;
+  const toss = clamp((time - 350) / 1500);
+  const visible = Math.min(1, toss * 9, (1 - toss) * 9);
+  introContext.globalAlpha = visible;
+  introContext.beginPath();
+  introContext.arc(centerX - 12 + toss * 30, centerY - 24 - Math.sin(toss * Math.PI * .64) * 109, 4.5, 0, Math.PI * 2);
+  introContext.fillStyle = '#dfff38';
+  introContext.fill();
+  introContext.globalAlpha = 1;
+}
+function drawFlyingBall(time, centerX, centerY) {
+  const progress = clamp((time - 1850) / 2450);
+  const radius = 5 + (Math.hypot(introWidth / 2, introHeight / 2) + 34) * progress ** 2.55;
+  const move = introEase(progress / .55);
+  const x = centerX + 26 * (1 - move);
+  const y = centerY - 75 * (1 - move);
+  introContext.save();
+  introContext.beginPath();
+  introContext.arc(x, y, radius, 0, Math.PI * 2);
+  introContext.fillStyle = '#dfff38';
+  introContext.fill();
+  const seamAlpha = 1 - introSmooth((progress - .76) / .24);
+  if (seamAlpha > 0) {
+    introContext.clip();
+    introContext.globalAlpha = seamAlpha * .94;
+    introContext.strokeStyle = '#fff';
+    introContext.lineWidth = Math.max(2, radius * .055);
+    introContext.lineCap = 'round';
+    for (const direction of [-1, 1]) {
+      introContext.beginPath();
+      introContext.moveTo(x + direction * radius * .58, y - radius * 1.05);
+      introContext.bezierCurveTo(x + direction * radius * .1, y - radius * .4, x + direction * radius * .1, y + radius * .4, x + direction * radius * .58, y + radius * 1.05);
+      introContext.stroke();
+    }
+  }
+  introContext.restore();
+}
+function renderIntro(time) {
+  if (!introContext || !introWidth || root.classList.contains('intro-seen')) return;
+  const centerX = introWidth / 2;
+  const centerY = introHeight / 2;
+  introContext.clearRect(0, 0, introWidth, introHeight);
+  serveScene?.render(time);
+  introStage.style.opacity = String(1 - introSmooth((time - 2950) / 650));
+  introLogo.style.opacity = String(1 - introSmooth((time - 4250) / 380));
+  introCaption.style.opacity = String(1 - introSmooth((time - 2750) / 400));
+  if (time < 4750) {
+    drawTossBall(time, centerX, centerY);
+    if (time >= 1850) drawFlyingBall(time, centerX, centerY);
+    if (time >= 4300) {
+      introContext.fillStyle = '#0b1711';
+      introContext.fillRect(centerX - 1, 0, 2, introHeight * introEase((time - 4300) / 450));
+    }
+  } else {
+    if (!intro.classList.contains('is-splitting')) intro.classList.add('is-splitting');
+    const gap = (centerX + 2) * introEase((time - 4750) / 1150);
+    introContext.fillStyle = '#dfff38';
+    introContext.fillRect(0, 0, Math.max(0, centerX - gap), introHeight);
+    introContext.fillRect(centerX + gap, 0, Math.max(0, centerX - gap), introHeight);
+    const seamAlpha = 1 - introSmooth((time - 4750) / 350);
+    if (seamAlpha > 0) {
+      introContext.globalAlpha = seamAlpha;
+      introContext.fillStyle = '#0b1711';
+      introContext.fillRect(centerX - 1, 0, 2, introHeight);
+      introContext.globalAlpha = 1;
+    }
+  }
+  intro.dataset.phase = time < 1850 ? 'serve' : time < 4300 ? 'ball' : time < 4750 ? 'seam' : 'split';
+}
 function finishIntro() {
   if (root.classList.contains('intro-seen')) return;
-  clearTimeout(introTimer);
+  cancelAnimationFrame(introFrame);
+  if (introFrameIntervals.length) {
+    const sorted = [...introFrameIntervals].sort((a, b) => a - b);
+    intro.dataset.frameMedianMs = sorted[Math.floor(sorted.length / 2)].toFixed(1);
+    intro.dataset.frameP95Ms = sorted[Math.floor(sorted.length * .95)].toFixed(1);
+  }
   root.classList.add('intro-seen');
-  document.body.classList.remove('intro-active', 'intro-playing', 'intro-paused');
+  document.body.classList.remove('intro-active');
   intro.setAttribute('aria-hidden', 'true');
+  if (!reduceMotion.matches) heroVideo.play().catch(() => {});
   visitLegacySection();
 }
-function resumeIntro() {
-  if (root.classList.contains('intro-seen') || document.readyState !== 'complete' || document.visibilityState !== 'visible' || introVisibleSince) return;
-  if (!introStarted && !reduceMotion.matches) {
-    document.body.classList.add('intro-playing');
-    introStarted = true;
+function advanceIntro(time) {
+  if (root.classList.contains('intro-seen') || document.visibilityState !== 'visible') return;
+  if (introLastTime) {
+    introFrameIntervals.push(time - introLastTime);
+    introElapsed += Math.min(time - introLastTime, 50);
   }
-  document.body.classList.remove('intro-paused');
-  introVisibleSince = performance.now();
-  introTimer = window.setTimeout(finishIntro, introRemaining);
+  introLastTime = time;
+  renderIntro(introElapsed);
+  if (introElapsed >= introDuration) finishIntro();
+  else introFrame = requestAnimationFrame(advanceIntro);
+}
+function resumeIntro() {
+  if (!introReady || root.classList.contains('intro-seen') || document.visibilityState !== 'visible' || introStarted) return;
+  introStarted = true;
+  introLastTime = 0;
+  if (reduceMotion.matches) window.setTimeout(finishIntro, 900);
+  else {
+    introFrame = requestAnimationFrame(advanceIntro);
+  }
 }
 function pauseIntro() {
-  if (!introVisibleSince || root.classList.contains('intro-seen')) return;
-  introRemaining = Math.max(0, introRemaining - (performance.now() - introVisibleSince));
-  introVisibleSince = 0;
-  clearTimeout(introTimer);
-  document.body.classList.add('intro-paused');
-}
-function scheduleIntro() {
-  requestAnimationFrame(() => requestAnimationFrame(resumeIntro));
+  cancelAnimationFrame(introFrame);
+  introStarted = false;
+  introLastTime = 0;
 }
 document.body.classList.add('intro-active');
-intro.addEventListener('animationend', event => {
-  if (event.animationName === 'introGone') finishIntro();
+sizeIntroCanvas();
+window.addEventListener('resize', sizeIntroCanvas, { passive: true });
+import('./assets/intro-3d.js').then(({ createServeScene }) => createServeScene(introPlayer)).then(scene => {
+  serveScene = scene;
+  introReady = true;
+  renderIntro(introElapsed);
+  window.setTimeout(resumeIntro, 220);
+}).catch(error => {
+  console.error('Serve scene failed to load', error);
+  window.setTimeout(finishIntro, 1000);
 });
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    if (introStarted) scheduleIntro();
-    else window.setTimeout(scheduleIntro, 500);
-  }
+  if (document.visibilityState === 'visible') resumeIntro();
   else pauseIntro();
 });
 window.addEventListener('pageshow', event => {
   if (!event.persisted) return;
   root.classList.remove('intro-seen');
   intro.removeAttribute('aria-hidden');
-  document.body.classList.remove('intro-playing', 'intro-paused');
+  intro.classList.remove('is-splitting');
   document.body.classList.add('intro-active');
+  introElapsed = 0;
+  introFrameIntervals = [];
   introStarted = false;
-  introVisibleSince = 0;
-  introRemaining = reduceMotion.matches ? 1800 : 7500;
-  scheduleIntro();
+  introLastTime = 0;
+  heroVideo.pause();
+  renderIntro(0);
+  resumeIntro();
 });
-if (document.readyState === 'complete') window.setTimeout(scheduleIntro, 500);
-else window.addEventListener('load', () => window.setTimeout(scheduleIntro, 500), { once: true });
-document.querySelector('#intro-skip').addEventListener('click', finishIntro);
+introLogo.addEventListener('click', finishIntro);
 
 const header = document.querySelector('.site-header');
 const meter = document.querySelector('.scroll-meter');
@@ -82,7 +197,7 @@ if (reduceMotion.matches) {
   heroVideo.pause();
   heroVideo.removeAttribute('autoplay');
 } else {
-  heroVideo.play().catch(() => {});
+  heroVideo.pause();
 }
 
 const menuToggle = document.querySelector('.menu-toggle');

@@ -16,3 +16,10 @@ The credential *types* shown in coach profiles use real Korean sports instructor
 - `assets/court.jpg`: [Pexels photo](https://www.pexels.com/photo/aerial-view-of-tennis-courts-with-players-27151849/)
 - `assets/coach.jpg`: [Unsplash photo](https://unsplash.com/photos/a-man-and-a-woman-playing-tennis-on-a-tennis-court-oDlLU_1hZwM)
 - `assets/hero.jpg`: poster frame retained from the earlier site.
+- `assets/serve-model.glb`: modified, black material version of the white mannequin and tennis serve animation from [Ultimate Animation Library — Free Demo](https://store.godotengine.org/asset/fabbio-mendoza/ultimate-animation-library/) by Fabbio Mendoza. Its custom license permits inclusion in finished commercial applications and modifications, but prohibits standalone redistribution of the pack or animation files. The site loads this model only as part of the opening scene.
+
+## Opening animation
+
+The player is a continuously animated 3D model rendered as a black silhouette. The racket is generated in Three.js, and a single `requestAnimationFrame` clock synchronizes the serve, ball, seam, and reveal. Browser refresh shows the opening again; clicking the top-left RALLY logo opens the homepage immediately. Animation timing targets 60 Hz where the device and browser permit it.
+
+`src/intro-3d.js` is the source for the bundled `assets/intro-3d.js`. To rebuild, install `three` and `esbuild`, then run `npx esbuild src/intro-3d.js --bundle --format=esm --minify --outfile=assets/intro-3d.js`.

@@ -17,39 +17,12 @@
 </head>
 <body>
   <div class="site-intro" id="site-intro" aria-label="RALLY 오프닝">
-    <button class="intro-logo" type="button" id="intro-skip" aria-label="오프닝 건너뛰고 홈페이지 보기">RALLY<span>.</span><small>TENNIS ACADEMY</small></button>
-    <div class="intro-scene" aria-hidden="true">
-      <div class="intro-ground"></div>
-      <svg class="server-figure" viewBox="0 0 230 330" role="presentation">
-        <ellipse cx="116" cy="308" rx="61" ry="5" fill="#d6ddd1" />
-        <g class="athlete" fill="#0a100c">
-          <path d="M104 188 C100 205 91 228 82 247 Q78 255 76 271 L68 295 L73 304 L91 300 Q101 277 103 259 Q113 237 126 202Z" />
-          <path d="M124 188 Q135 203 140 222 L153 255 Q160 272 165 289 L179 296 L181 305 L160 303 Q142 281 136 262 L119 235 Q113 224 111 205Z" />
-          <path d="M67 292 L55 299 Q49 305 56 309 L87 309 Q93 307 90 301 L78 287Z" />
-          <path d="M162 291 L179 292 L195 303 Q198 309 188 310 L161 307Z" />
-          <path d="M104 161 L133 161 L141 194 Q129 201 116 197 L102 199 L95 190Z" />
-          <path d="M101 83 Q117 77 135 83 Q148 87 151 107 L141 131 L136 165 Q122 176 100 168 L91 129 L86 107 Q88 91 101 83Z" />
-          <path d="M109 67 L127 66 L128 88 Q117 96 105 86Z" />
-          <circle cx="117" cy="51" r="19" />
-          <path d="M99 46 Q100 26 117 27 Q132 25 138 41 L133 46 Q118 35 99 46Z" />
-          <g class="serve-toss-arm">
-            <path d="M99 92 Q87 89 79 78 L61 48 Q55 40 49 44 Q44 48 50 59 L67 93 Q78 112 96 115 L105 105Z" />
-            <circle cx="51" cy="44" r="6" />
-          </g>
-          <g class="serve-racket-arm">
-            <path d="M135 89 Q152 85 161 102 L179 114 L186 105 L168 94 Q161 81 145 79Z" />
-            <circle cx="181" cy="112" r="7" />
-            <path d="M183 110 L204 82" fill="none" stroke="#0a100c" stroke-width="7" stroke-linecap="round" />
-            <ellipse cx="211" cy="58" rx="16" ry="26" fill="none" stroke="#0a100c" stroke-width="6" />
-            <path d="M199 44 L222 72 M202 38 L225 66 M197 57 L224 57 M198 67 L221 45" fill="none" stroke="#0a100c" stroke-width="1.5" opacity=".65" />
-          </g>
-        </g>
-      </svg>
-      <div class="toss-ball"></div><div class="intro-court-line"></div>
+    <canvas class="intro-canvas" id="intro-canvas" aria-hidden="true"></canvas>
+    <div class="intro-stage" aria-hidden="true">
+      <div class="intro-ground"></div><div class="intro-court-line"></div>
+      <canvas class="intro-player" id="intro-player" aria-hidden="true"></canvas>
     </div>
-    <div class="flying-ball" aria-hidden="true"><span></span></div>
-    <div class="intro-seam" aria-hidden="true"></div>
-    <div class="intro-half intro-half-left" aria-hidden="true"></div><div class="intro-half intro-half-right" aria-hidden="true"></div>
+    <button class="intro-logo" type="button" id="intro-skip" aria-label="오프닝 건너뛰고 홈페이지 보기">RALLY<span>.</span><small>TENNIS ACADEMY</small></button>
     <p class="intro-caption">NEXT POINT STARTS HERE</p>
   </div>
 
