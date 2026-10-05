@@ -1,17 +1,9 @@
 // Bind-relative tennis grip. Only finger bones are controlled: the measured
 // wrist and forearm motion, racket socket, and bone lengths stay independent.
-export function createServeGrip(THREE, model) {
-  const hand = model.getObjectByName('RightHand');
+function createHandGrip(THREE, model, side, configurations) {
+  const hand = model.getObjectByName(`${side}Hand`);
   if (!hand) return { apply() {}, restore() {}, controlledBones: [] };
   model.updateMatrixWorld(true);
-  const configurations = {
-    // Index stays slightly separated rather than closing into the other fingers.
-    Index: { curl: [44, 70, 45], inward: 25 },
-    Middle: { curl: [52, 78, 44], inward: 4 },
-    Ring: { curl: [58, 85, 48], inward: -4 },
-    Pinky: { curl: [62, 85, 50], inward: -20 },
-    Thumb: { curl: [0, 60, 60], inward: 10, opposition: -60 },
-  };
   const localFlexAxis = new THREE.Vector3(1, 0, 0);
   const localAdductionAxis = new THREE.Vector3(0, 0, 1);
   const localOppositionAxis = new THREE.Vector3(0, 1, 0);
@@ -23,7 +15,7 @@ export function createServeGrip(THREE, model) {
   const basePositions = [];
   for (const [finger, configuration] of Object.entries(configurations)) {
     for (let segment = 1; segment <= 3; segment++) {
-      const bone = model.getObjectByName(`RightHand${finger}${segment}`);
+      const bone = model.getObjectByName(`${side}Hand${finger}${segment}`);
       if (!bone) continue;
       const bindQuaternion = bone.quaternion.clone();
       curlDelta.setFromAxisAngle(localFlexAxis, configuration.curl[segment - 1] * degrees);
@@ -66,4 +58,25 @@ export function createServeGrip(THREE, model) {
     palmNormalLocal: new THREE.Vector3(0, 0, 1),
     controlledBones: controls.map(({ bone }) => bone.name),
   };
+}
+
+export function createServeGrip(THREE, model) {
+  return createHandGrip(THREE, model, 'Right', {
+    // Index stays slightly separated rather than closing into the other fingers.
+    Index: { curl: [44, 70, 45], inward: 25 },
+    Middle: { curl: [52, 78, 44], inward: 4 },
+    Ring: { curl: [58, 85, 48], inward: -4 },
+    Pinky: { curl: [62, 85, 50], inward: -20 },
+    Thumb: { curl: [0, 60, 60], inward: 10, opposition: -60 },
+  });
+}
+
+export function createTossGrip(THREE, model) {
+  return createHandGrip(THREE, model, 'Left', {
+    Index: { curl: [30, 48, 25], inward: 12 },
+    Middle: { curl: [38, 52, 28], inward: 4 },
+    Ring: { curl: [42, 57, 30], inward: -4 },
+    Pinky: { curl: [48, 62, 32], inward: -14 },
+    Thumb: { curl: [0, 34, 25], inward: 8, opposition: -36 },
+  });
 }

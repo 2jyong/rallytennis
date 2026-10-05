@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createTennisBall } from './tennis-ball.js';
 import { createServeMotion } from './serve-motion.js';
-import { createServeGrip } from './serve-grip.js';
+import { createServeGrip, createTossGrip } from './serve-grip.js';
 
 const clamp = value => Math.min(1, Math.max(0, value));
 const smooth = value => { const p = clamp(value); return p * p * (3 - 2 * p); };
-export const introTiming = { impact: 1900, cover: 2650, seamEnd: 2920, end: 3750 };
+export const introTiming = { tossRelease: 1100, impact: 1900, cover: 2650, seamEnd: 2920, end: 3750 };
 
 export async function createServeScene(playerCanvas, ballCanvas) {
   const playerRenderer = new THREE.WebGLRenderer({ canvas: playerCanvas, alpha: true, antialias: true });
@@ -24,6 +24,7 @@ export async function createServeScene(playerCanvas, ballCanvas) {
   playerScene.add(model);
   const motion = await createServeMotion(THREE, model);
   const grip = createServeGrip(THREE, model);
+  const tossGrip = createTossGrip(THREE, model);
   const hand = motion.rightHand || model.getObjectByName('RightHand');
   const forearm = motion.rightForeArm || model.getObjectByName('RightForeArm');
   const leftHand = motion.leftHand || model.getObjectByName('LeftHand');
@@ -65,10 +66,6 @@ export async function createServeScene(playerCanvas, ballCanvas) {
   hand.add(racket);
   model.updateMatrixWorld(true);
   const contactWorld = racketHead.getWorldPosition(new THREE.Vector3());
-  motion.update(motion.impactTime * 0.3);
-  model.updateMatrixWorld(true);
-  const tossWorld = leftHand.getWorldPosition(new THREE.Vector3());
-  motion.update(0);
 
   const ballRenderer = new THREE.WebGLRenderer({ canvas: ballCanvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
   ballRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
@@ -80,7 +77,16 @@ export async function createServeScene(playerCanvas, ballCanvas) {
   const ballCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 4000);
   ballCamera.position.z = 2000;
   const ball = createTennisBall(THREE);
-  const impactRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(introTiming.impact * 0.0012, introTiming.impact * 0.0016, 0.25));
+  const heldAnchor = new THREE.Object3D();
+  const leftScale = leftHand.getWorldScale(new THREE.Vector3());
+  heldAnchor.position.copy(tossGrip.gripCenterLocal);
+  heldAnchor.position.z += 0.018 / leftScale.z;
+  leftHand.add(heldAnchor);
+  motion.update(introTiming.tossRelease / introTiming.impact * motion.impactTime);
+  model.updateMatrixWorld(true);
+  const releaseWorld = heldAnchor.getWorldPosition(new THREE.Vector3());
+  motion.update(0);
+  const impactRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler((introTiming.impact - introTiming.tossRelease) * 0.0012, (introTiming.impact - introTiming.tossRelease) * 0.0016, 0.25));
   const spinAxis = new THREE.Vector3(0.6, 0.78, 0.18).normalize();
   const spinRotation = new THREE.Quaternion();
   ballScene.add(ball);
@@ -94,7 +100,8 @@ export async function createServeScene(playerCanvas, ballCanvas) {
   let width = 1;
   let height = 1;
   let contact = { x: 0, y: 0 };
-  let toss = { x: 0, y: 0 };
+  let release = { x: 0, y: 0 };
+  const heldWorld = new THREE.Vector3();
   function project(point) {
     const projected = point.clone().project(playerCamera);
     const rect = playerCanvas.getBoundingClientRect();
@@ -115,7 +122,7 @@ export async function createServeScene(playerCanvas, ballCanvas) {
     ballCamera.updateProjectionMatrix();
     playerCamera.updateMatrixWorld(true);
     contact = project(contactWorld);
-    toss = project(tossWorld);
+    release = project(releaseWorld);
   }
   function render(ms) {
     const motionTime = ms <= introTiming.impact
@@ -123,17 +130,22 @@ export async function createServeScene(playerCanvas, ballCanvas) {
       : Math.min(motion.duration, motion.impactTime + (ms - introTiming.impact) / 1000);
     if (ms < introTiming.impact + 450) {
       motion.update(motionTime);
+      tossGrip.apply(1 - 0.55 * smooth((ms - introTiming.tossRelease) / 240));
       playerRenderer.render(playerScene, playerCamera);
     }
     let radius = 4.4;
-    let x = toss.x;
-    let y = toss.y;
-    ball.visible = ms >= 520;
-    if (ms < introTiming.impact) {
-      const p = clamp((ms - 520) / (introTiming.impact - 520));
+    let x = release.x;
+    let y = release.y;
+    if (ms < introTiming.tossRelease) {
+      const held = project(heldAnchor.getWorldPosition(heldWorld));
+      x = held.x;
+      y = held.y;
+      ball.rotation.set(0, 0, 0.25);
+    } else if (ms < introTiming.impact) {
+      const p = clamp((ms - introTiming.tossRelease) / (introTiming.impact - introTiming.tossRelease));
       x += (contact.x - x) * p;
       y += (contact.y - y) * p - Math.sin(Math.PI * p) * 62;
-      ball.rotation.set(ms * 0.0012, ms * 0.0016, 0.25);
+      ball.rotation.set((ms - introTiming.tossRelease) * 0.0012, (ms - introTiming.tossRelease) * 0.0016, 0.25);
     } else {
       const p = clamp((ms - introTiming.impact) / (introTiming.cover - introTiming.impact));
       const targetRadius = Math.hypot(width / 2, height / 2) + 80;
