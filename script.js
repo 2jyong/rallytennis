@@ -17,13 +17,16 @@ window.addEventListener('hashchange', () => {
 // One animation clock keeps the 3D serve, ball, seam, and reveal in sync.
 const intro = document.querySelector('#site-intro');
 const introCanvas = document.querySelector('#intro-canvas');
+const introBallCanvas = document.querySelector('#intro-ball-canvas');
 const introContext = introCanvas.getContext('2d', { alpha: true });
 const introStage = intro.querySelector('.intro-stage');
 const introPlayer = document.querySelector('#intro-player');
 let serveScene;
 const introLogo = document.querySelector('#intro-skip');
 const introCaption = intro.querySelector('.intro-caption');
-const introDuration = 5900;
+let introTiming = { impact: 1900, cover: 2650, seamEnd: 2920, end: 3750 };
+let introDuration = introTiming.end;
+let introBallSnapshot;
 let introElapsed = 0;
 let introLastTime = 0;
 let introFrame = 0;
@@ -45,70 +48,38 @@ function sizeIntroCanvas() {
   introCanvas.width = Math.round(introWidth * ratio);
   introCanvas.height = Math.round(introHeight * ratio);
   introContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+  introBallSnapshot = null;
   serveScene?.resize();
   renderIntro(introElapsed);
-}
-function drawTossBall(time, centerX, centerY) {
-  if (time < 350 || time >= 1850) return;
-  const toss = clamp((time - 350) / 1500);
-  const visible = Math.min(1, toss * 9, (1 - toss) * 9);
-  introContext.globalAlpha = visible;
-  introContext.beginPath();
-  introContext.arc(centerX - 12 + toss * 30, centerY - 24 - Math.sin(toss * Math.PI * .64) * 109, 4.5, 0, Math.PI * 2);
-  introContext.fillStyle = '#dfff38';
-  introContext.fill();
-  introContext.globalAlpha = 1;
-}
-function drawFlyingBall(time, centerX, centerY) {
-  const progress = clamp((time - 1850) / 2450);
-  const radius = 5 + (Math.hypot(introWidth / 2, introHeight / 2) + 34) * progress ** 2.55;
-  const move = introEase(progress / .55);
-  const x = centerX + 26 * (1 - move);
-  const y = centerY - 75 * (1 - move);
-  introContext.save();
-  introContext.beginPath();
-  introContext.arc(x, y, radius, 0, Math.PI * 2);
-  introContext.fillStyle = '#dfff38';
-  introContext.fill();
-  const seamAlpha = 1 - introSmooth((progress - .76) / .24);
-  if (seamAlpha > 0) {
-    introContext.clip();
-    introContext.globalAlpha = seamAlpha * .94;
-    introContext.strokeStyle = '#fff';
-    introContext.lineWidth = Math.max(2, radius * .055);
-    introContext.lineCap = 'round';
-    for (const direction of [-1, 1]) {
-      introContext.beginPath();
-      introContext.moveTo(x + direction * radius * .58, y - radius * 1.05);
-      introContext.bezierCurveTo(x + direction * radius * .1, y - radius * .4, x + direction * radius * .1, y + radius * .4, x + direction * radius * .58, y + radius * 1.05);
-      introContext.stroke();
-    }
-  }
-  introContext.restore();
 }
 function renderIntro(time) {
   if (!introContext || !introWidth || root.classList.contains('intro-seen')) return;
   const centerX = introWidth / 2;
-  const centerY = introHeight / 2;
   introContext.clearRect(0, 0, introWidth, introHeight);
-  serveScene?.render(time);
-  introStage.style.opacity = String(1 - introSmooth((time - 2950) / 650));
-  introLogo.style.opacity = String(1 - introSmooth((time - 4250) / 380));
-  introCaption.style.opacity = String(1 - introSmooth((time - 2750) / 400));
-  if (time < 4750) {
-    drawTossBall(time, centerX, centerY);
-    if (time >= 1850) drawFlyingBall(time, centerX, centerY);
-    if (time >= 4300) {
+  if (!introBallSnapshot) serveScene?.render(time);
+  introStage.style.opacity = String(1 - introSmooth((time - introTiming.impact - 100) / 350));
+  introLogo.style.opacity = String(1 - introSmooth((time - introTiming.cover + 120) / 260));
+  introCaption.style.opacity = String(1 - introSmooth((time - introTiming.impact + 120) / 300));
+  if (time < introTiming.seamEnd) {
+    introBallCanvas.style.visibility = 'visible';
+    if (time >= introTiming.cover) {
       introContext.fillStyle = '#0b1711';
-      introContext.fillRect(centerX - 1, 0, 2, introHeight * introEase((time - 4300) / 450));
+      introContext.fillRect(centerX - 1, 0, 2, introHeight * introEase((time - introTiming.cover) / (introTiming.seamEnd - introTiming.cover)));
     }
   } else {
+    if (!introBallSnapshot) {
+      introBallSnapshot = document.createElement('canvas');
+      introBallSnapshot.width = introBallCanvas.width;
+      introBallSnapshot.height = introBallCanvas.height;
+      introBallSnapshot.getContext('2d').drawImage(introBallCanvas, 0, 0);
+    }
+    introBallCanvas.style.visibility = 'hidden';
     if (!intro.classList.contains('is-splitting')) intro.classList.add('is-splitting');
-    const gap = (centerX + 2) * introEase((time - 4750) / 1150);
-    introContext.fillStyle = '#dfff38';
-    introContext.fillRect(0, 0, Math.max(0, centerX - gap), introHeight);
-    introContext.fillRect(centerX + gap, 0, Math.max(0, centerX - gap), introHeight);
-    const seamAlpha = 1 - introSmooth((time - 4750) / 350);
+    const gap = (centerX + 2) * introEase((time - introTiming.seamEnd) / (introTiming.end - introTiming.seamEnd));
+    const sourceHalf = introBallSnapshot.width / 2;
+    introContext.drawImage(introBallSnapshot, 0, 0, sourceHalf, introBallSnapshot.height, -gap, 0, centerX, introHeight);
+    introContext.drawImage(introBallSnapshot, sourceHalf, 0, sourceHalf, introBallSnapshot.height, centerX + gap, 0, centerX, introHeight);
+    const seamAlpha = 1 - introSmooth((time - introTiming.seamEnd) / 200);
     if (seamAlpha > 0) {
       introContext.globalAlpha = seamAlpha;
       introContext.fillStyle = '#0b1711';
@@ -116,7 +87,7 @@ function renderIntro(time) {
       introContext.globalAlpha = 1;
     }
   }
-  intro.dataset.phase = time < 1850 ? 'serve' : time < 4300 ? 'ball' : time < 4750 ? 'seam' : 'split';
+  intro.dataset.phase = time < introTiming.impact ? 'serve' : time < introTiming.cover ? 'ball' : time < introTiming.seamEnd ? 'seam' : 'split';
 }
 function finishIntro() {
   if (root.classList.contains('intro-seen')) return;
@@ -136,7 +107,7 @@ function advanceIntro(time) {
   if (root.classList.contains('intro-seen') || document.visibilityState !== 'visible') return;
   if (introLastTime) {
     introFrameIntervals.push(time - introLastTime);
-    introElapsed += Math.min(time - introLastTime, 50);
+    introElapsed += time - introLastTime;
   }
   introLastTime = time;
   renderIntro(introElapsed);
@@ -160,8 +131,10 @@ function pauseIntro() {
 document.body.classList.add('intro-active');
 sizeIntroCanvas();
 window.addEventListener('resize', sizeIntroCanvas, { passive: true });
-import('./assets/intro-3d.js').then(({ createServeScene }) => createServeScene(introPlayer)).then(scene => {
+import('./assets/intro-3d.js').then(({ createServeScene }) => createServeScene(introPlayer, introBallCanvas)).then(scene => {
   serveScene = scene;
+  introTiming = scene.timing;
+  introDuration = introTiming.end;
   introReady = true;
   renderIntro(introElapsed);
   window.setTimeout(resumeIntro, 220);
@@ -180,6 +153,8 @@ window.addEventListener('pageshow', event => {
   intro.classList.remove('is-splitting');
   document.body.classList.add('intro-active');
   introElapsed = 0;
+  introBallSnapshot = null;
+  introBallCanvas.style.visibility = 'visible';
   introFrameIntervals = [];
   introStarted = false;
   introLastTime = 0;

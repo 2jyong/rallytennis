@@ -1,7 +1,8 @@
-/* One canvas paints every frame of the serve, ball, seam, and reveal. */
+/* The shaded ball keeps its surface intact through the centre reveal. */
 #site-intro{background:#f9faf4;animation:none!important;contain:layout paint}
 #site-intro.is-splitting{background:transparent}
-#site-intro .intro-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+#site-intro .intro-ball-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+#site-intro .intro-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
 #site-intro .intro-stage{position:absolute;inset:0;z-index:2;pointer-events:none;animation:none!important}
 #site-intro .intro-ground{top:calc(50% + 64px);width:230px;max-width:60vw}
 #site-intro .intro-court-line{top:calc(50% + 64px);height:13vh}
