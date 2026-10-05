@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#101711" />
+  <meta name="description" content="RALLY 테니스 아카데미. 공을 읽고, 움직임을 만들고, 경기를 바꾸는 코칭." />
+  <title>RALLY — Tennis Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23101711'/%3E%3Cpath d='M9 49V15h20c12 0 17 6 17 14 0 6-3 10-9 12l10 8H31l-9-8v8H9Zm13-20h9c3 0 4-1 4-3s-1-3-4-3h-9v6Z' fill='%23dfff38'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="scroll-meter" aria-hidden="true"></div>
+  <header class="site-header" id="top">
+    <a class="brand" href="#hero" aria-label="RALLY 첫 화면으로 이동"><strong>RALLY<span class="brand-dot">.</span></strong><small>TENNIS ACADEMY</small></a>
+    <nav class="desktop-nav" aria-label="주요 메뉴">
+      <a href="#about">아카데미</a><a href="#program">프로그램</a><a href="#coaching">코칭</a><a href="#space">훈련 공간</a>
+    </nav>
+    <a class="header-cta" href="#contact">레슨 문의 <span aria-hidden="true">↗</span></a>
+    <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+  </header>
+  <nav class="mobile-menu" id="mobile-menu" aria-label="모바일 메뉴" inert>
+    <a href="#about">아카데미</a><a href="#program">프로그램</a><a href="#coaching">코칭</a><a href="#space">훈련 공간</a><a href="#contact">레슨 문의</a>
+  </nav>
+
+  <main>
+    <section class="hero" id="hero" aria-label="RALLY 테니스 아카데미">
+      <div class="hero-media" aria-hidden="true">
+        <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="assets/hero.jpg"></video>
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-court-line" aria-hidden="true"></div>
+      <div class="hero-content shell">
+        <div class="hero-pre"><span class="live-mark"></span> PLAY THE NEXT POINT</div>
+        <h1 class="hero-title"><span class="title-line"><span>공을 읽고.</span></span><span class="title-line"><span>경기를 바꾸다.</span></span></h1>
+        <div class="hero-bottom"><p>한 번의 스윙보다, 다음 공을 준비하는 움직임부터.</p><a class="round-link" href="#program" aria-label="레슨 프로그램 보기"><span>레슨 보기</span><b aria-hidden="true">↘</b></a></div>
+      </div>
+      <div class="hero-rail" aria-hidden="true"><span>01 / 06</span><span>SCROLL TO EXPLORE</span><span>연출 영상</span></div>
+    </section>
+
+    <div class="runline" aria-hidden="true"><div class="runline-track">READ THE BALL <i>●</i> MOVE FIRST <i>●</i> OWN THE RALLY <i>●</i> READ THE BALL <i>●</i> MOVE FIRST <i>●</i> OWN THE RALLY <i>●</i></div></div>
+
+    <section class="intro section-pad" id="about">
+      <div class="shell intro-grid">
+        <div class="section-index reveal"><span>01</span><span>THE APPROACH</span></div>
+        <div class="intro-main">
+          <h2 class="display-head reveal">좋은 타구는<br><em>준비된 발</em>에서<br>시작됩니다.</h2>
+          <div class="intro-body reveal"><div class="short-line"></div><p>라켓을 휘두르기 전, 공의 높이와 상대의 움직임을 봅니다. 한 발 먼저 움직이면 같은 스윙도 다른 결과를 만듭니다.</p><p>RALLY는 기술을 따로 떼어 외우기보다, 실제 랠리 안에서 읽고 판단하는 감각을 쌓는 코칭을 지향합니다.</p></div>
+        </div>
+      </div>
+      <div class="court-diagram shell" aria-label="읽기, 이동, 타격으로 이어지는 코칭 흐름">
+        <div class="court-visual" aria-hidden="true"><svg viewBox="0 0 950 270" preserveAspectRatio="none"><rect x="1" y="1" width="948" height="268"/><path d="M475 1v268M1 135h948M195 1v268M755 1v268"/><circle cx="475" cy="135" r="7"/></svg><span class="trajectory"></span></div>
+        <div class="court-labels"><span>READ <b>01 읽기</b></span><span>MOVE <b>02 이동</b></span><span>STRIKE <b>03 타격</b></span></div>
+      </div>
+    </section>
+
+    <section class="image-break" aria-label="테니스 훈련 장면"><div class="image-break-img" role="img" aria-label="테니스 선수가 공을 향해 움직이는 연출 이미지"></div><div class="image-break-overlay"><span class="eyebrow">THE MOMENT BEFORE IMPACT</span><p>공이 오기 전에<br>이미 시작된 플레이.</p><small>연출 이미지</small></div></section>
+
+    <section class="program section-pad" id="program">
+      <div class="shell">
+        <div class="section-top reveal"><div class="section-index"><span>02</span><span>PROGRAM</span></div><h2>당신의 지금에 맞는<br><em>다음 랠리.</em></h2><p>처음 라켓을 잡는 순간부터 경기의 흐름을 바꾸고 싶을 때까지.</p></div>
+        <div class="program-grid">
+          <div class="program-list" role="tablist" aria-label="레슨 프로그램">
+            <button class="program-tab active" role="tab" id="tab-0" aria-selected="true" aria-controls="program-panel" data-program="0"><span class="program-number">01</span><strong>첫 랠리</strong><span class="program-type">입문</span><span class="program-arrow" aria-hidden="true">↗</span></button>
+            <button class="program-tab" role="tab" id="tab-1" aria-selected="false" aria-controls="program-panel" data-program="1" tabindex="-1"><span class="program-number">02</span><strong>나만의 페이스</strong><span class="program-type">개인</span><span class="program-arrow" aria-hidden="true">↗</span></button>
+            <button class="program-tab" role="tab" id="tab-2" aria-selected="false" aria-controls="program-panel" data-program="2" tabindex="-1"><span class="program-number">03</span><strong>함께 만드는 랠리</strong><span class="program-type">그룹</span><span class="program-arrow" aria-hidden="true">↗</span></button>
+            <button class="program-tab" role="tab" id="tab-3" aria-selected="false" aria-controls="program-panel" data-program="3" tabindex="-1"><span class="program-number">04</span><strong>작은 시작, 큰 스윙</strong><span class="program-type">주니어</span><span class="program-arrow" aria-hidden="true">↗</span></button>
+            <button class="program-tab" role="tab" id="tab-4" aria-selected="false" aria-controls="program-panel" data-program="4" tabindex="-1"><span class="program-number">05</span><strong>게임을 읽는 힘</strong><span class="program-type">경기 집중</span><span class="program-arrow" aria-hidden="true">↗</span></button>
+          </div>
+          <div class="program-panel" id="program-panel" role="tabpanel" aria-labelledby="tab-0" tabindex="0"><div class="program-image" role="img" aria-label="테니스 훈련 연출 이미지"></div><div class="program-info"><span class="program-kicker">PROGRAM 01 / 05</span><p>그립과 스텝부터 익히며, 공을 주고받는 즐거움을 만납니다.</p><a href="#contact">이 레슨 문의하기 <span aria-hidden="true">↗</span></a></div><small class="photo-label">연출 이미지</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="coaching" id="coaching">
+      <div class="shell coaching-heading"><div class="section-index"><span>03</span><span>COACHING</span></div><h2 class="reveal">감각에 기대지 않는<br><em>세 번의 질문.</em></h2></div>
+      <div class="coaching-stage shell">
+        <div class="stage-visual"><div class="stage-court"><span class="stage-baseline"></span><span class="stage-midline"></span><span class="stage-service"></span><span class="stage-ball"></span><span class="stage-trail"></span></div><div class="stage-caption">READ · MOVE · PLAY</div></div>
+        <div class="stage-steps">
+          <article class="stage-step active" data-stage="0"><span class="step-num">01 / READ</span><h3>어디로 오는가.</h3><p>공의 궤적과 바운드를 먼저 읽습니다. 판단이 빨라지면 움직임에도 여유가 생깁니다.</p></article>
+          <article class="stage-step" data-stage="1"><span class="step-num">02 / MOVE</span><h3>어디에 서야 하는가.</h3><p>공에 닿는 것에서 멈추지 않습니다. 다음 타구를 위한 위치까지 움직입니다.</p></article>
+          <article class="stage-step" data-stage="2"><span class="step-num">03 / PLAY</span><h3>어떻게 이어갈 것인가.</h3><p>한 번의 성공적인 샷보다 랠리 전체를 설계하는 선택을 연습합니다.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="coach-story section-pad" id="team">
+      <div class="shell coach-grid"><div class="coach-photo" role="img" aria-label="테니스 코칭 연출 이미지"><small>연출 이미지</small></div><div class="coach-copy"><div class="section-index"><span>04</span><span>ON COURT</span></div><h2 class="reveal">잘 치는 법보다<br><em>다시 해낼 수 있는 법.</em></h2><p class="reveal">오늘 맞힌 한 공이 내일도 같은 감각으로 이어지도록. 움직임을 관찰하고, 이유를 짚고, 다시 코트에서 확인합니다.</p><div class="coach-rule"><span>WATCH</span><span>ADJUST</span><span>REPEAT</span></div></div></div>
+    </section>
+
+    <section class="space section-pad" id="space"><div class="shell space-heading"><div class="section-index"><span>05</span><span>THE COURT</span></div><h2 class="reveal">연습은 코트 위에서<br><em>완성됩니다.</em></h2><p>발의 위치, 타점, 다음 움직임까지. 매 순간을 경기처럼 살핍니다.</p></div><div class="space-track" aria-label="테니스 훈련 이미지 모음"><figure class="space-item"><div class="space-photo space-photo-a" role="img" aria-label="테니스 코트 연출 이미지"></div><figcaption><span>01</span><strong>움직임을 만드는 공간</strong><small>연출 이미지</small></figcaption></figure><figure class="space-item"><div class="space-photo space-photo-b" role="img" aria-label="테니스 선수가 공을 향해 움직이는 연출 이미지"></div><figcaption><span>02</span><strong>한 타구에 집중하는 순간</strong><small>연출 이미지</small></figcaption></figure><figure class="space-item"><div class="space-photo space-photo-c" role="img" aria-label="테니스 연습 장면 연출 이미지"></div><figcaption><span>03</span><strong>다음 랠리를 준비하는 시간</strong><small>연출 이미지</small></figcaption></figure></div><div class="space-controls shell"><button type="button" class="space-prev" aria-label="이전 이미지">←</button><button type="button" class="space-next" aria-label="다음 이미지">→</button><span>옆으로 넘겨 더 보기</span></div></section>
+
+    <section class="statement"><div class="shell"><span class="eyebrow">RALLY / TENNIS ACADEMY</span><p class="statement-main reveal">코트에서 달라지는 것은<br><em>스윙만이 아닙니다.</em></p><div class="statement-bottom"><span>SEE THE BALL<br>OWN THE MOMENT</span><p>공을 읽고, 자리를 잡고, 다음을 선택하는 힘.<br>그 순간부터 경기가 달라집니다.</p></div></div></section>
+
+    <section class="contact section-pad" id="contact"><div class="shell contact-grid"><div><div class="section-index"><span>06</span><span>YOUR NEXT POINT</span></div><h2 class="reveal">다음 랠리를<br><em>시작해볼까요?</em></h2><p>관심 있는 레슨을 골라 문의 내용을 정리해보세요.</p></div><div class="contact-box"><label for="contact-program">관심 있는 레슨</label><select id="contact-program"><option>첫 랠리 · 입문</option><option>나만의 페이스 · 개인</option><option>함께 만드는 랠리 · 그룹</option><option>작은 시작, 큰 스윙 · 주니어</option><option>게임을 읽는 힘 · 경기 집중</option></select><label for="contact-level">현재 경험</label><select id="contact-level"><option>처음 시작해요</option><option>기본 랠리는 가능해요</option><option>경기 경험이 있어요</option></select><button type="button" id="copy-inquiry">문의 내용 복사 <span aria-hidden="true">↗</span></button><p class="contact-feedback" role="status" aria-live="polite"></p></div></div></section>
+  </main>
+  <footer class="site-footer"><div class="shell"><div class="footer-brand">RALLY<span>.</span></div><div class="footer-bottom"><span>TENNIS ACADEMY</span><a href="#hero">맨 위로 ↑</a></div></div></footer>
+</body>
+</html>
