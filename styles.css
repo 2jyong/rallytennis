@@ -60,3 +60,5 @@ body.intro-paused .site-intro,body.intro-paused .site-intro *{animation-play-sta
 }
 @media(prefers-reduced-motion:reduce){.site-intro{display:block!important;animation:none!important}.intro-seen .site-intro{display:none!important}.toss-ball,.flying-ball,.intro-fill,.intro-seam,.intro-half{display:none!important}}
 .server-figure{overflow:visible}
+.landing-reset{scroll-behavior:auto!important}
+body.intro-active{position:fixed;inset:0;width:100%;height:100svh;overflow:hidden!important}

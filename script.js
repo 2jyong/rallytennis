@@ -3,13 +3,17 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const root = document.documentElement;
 history.scrollRestoration = 'manual';
 const legacySections = { coaching: 'about', team: 'proof', program: 'lessons', space: 'difference', contact: 'info', 'contact-program': 'info', 'contact-level': 'info' };
-const legacyDestination = legacySections[location.hash.slice(1)];
-if (legacyDestination) history.replaceState(null, '', `#${legacyDestination}`);
-function settleIntroDestination(skipToHero = false) {
-  if (skipToHero) history.replaceState(null, '', location.pathname + location.search);
-  const destination = !skipToHero && document.getElementById(location.hash.slice(1));
-  if (destination) destination.scrollIntoView({ behavior: 'instant' });
-  else window.scrollTo({ top: 0, behavior: 'instant' });
+let landingScrollGuard = true;
+function settleIntroDestination() {
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+function keepHeroAtTop() {
+  if (landingScrollGuard && window.scrollY > 0) settleIntroDestination();
+}
+function releaseLandingScrollGuard() {
+  landingScrollGuard = false;
+  root.classList.remove('landing-reset');
 }
 window.addEventListener('hashchange', () => {
   const destination = legacySections[location.hash.slice(1)];
@@ -93,7 +97,7 @@ function renderIntro(time) {
   }
   intro.dataset.phase = time < introTiming.impact ? 'serve' : time < introTiming.cover ? 'ball' : time < introTiming.seamEnd ? 'seam' : 'split';
 }
-function finishIntro(skipToHero = false) {
+function finishIntro() {
   if (root.classList.contains('intro-seen')) return;
   cancelAnimationFrame(introFrame);
   if (introFrameIntervals.length) {
@@ -105,8 +109,8 @@ function finishIntro(skipToHero = false) {
   document.body.classList.remove('intro-active');
   intro.setAttribute('aria-hidden', 'true');
   if (!reduceMotion.matches) heroVideo.play().catch(() => {});
-  settleIntroDestination(skipToHero);
-  requestAnimationFrame(() => settleIntroDestination(skipToHero));
+  settleIntroDestination();
+  requestAnimationFrame(keepHeroAtTop);
 }
 function advanceIntro(time) {
   if (root.classList.contains('intro-seen') || document.visibilityState !== 'visible') return;
@@ -134,7 +138,16 @@ function pauseIntro() {
   introLastTime = 0;
 }
 document.body.classList.add('intro-active');
-if (!location.hash) window.scrollTo({ top: 0, behavior: 'instant' });
+settleIntroDestination();
+window.addEventListener('scroll', keepHeroAtTop, { passive: true });
+for (const type of ['wheel', 'touchstart', 'pointerdown', 'keydown']) {
+  window.addEventListener(type, event => {
+    if (root.classList.contains('intro-seen') && !intro.contains(event.target)) releaseLandingScrollGuard();
+  }, { passive: true, capture: true });
+}
+document.addEventListener('click', event => {
+  if (event.target.closest('a[href^="#"]')) releaseLandingScrollGuard();
+}, true);
 sizeIntroCanvas();
 window.addEventListener('resize', sizeIntroCanvas, { passive: true });
 import('./assets/intro-3d.js').then(({ createServeScene }) => createServeScene(introPlayer, introBallCanvas)).then(scene => {
@@ -153,7 +166,9 @@ document.addEventListener('visibilitychange', () => {
   else pauseIntro();
 });
 window.addEventListener('pageshow', event => {
-  if (!location.hash) window.scrollTo({ top: 0, behavior: 'instant' });
+  landingScrollGuard = true;
+  root.classList.add('landing-reset');
+  settleIntroDestination();
   if (!event.persisted) return;
   root.classList.remove('intro-seen');
   intro.removeAttribute('aria-hidden');
@@ -169,7 +184,7 @@ window.addEventListener('pageshow', event => {
   renderIntro(0);
   resumeIntro();
 });
-introLogo.addEventListener('click', () => finishIntro(true));
+introLogo.addEventListener('click', finishIntro);
 
 const header = document.querySelector('.site-header');
 const meter = document.querySelector('.scroll-meter');

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rallytennis-cyan.vercel.app/sitemap.xml
